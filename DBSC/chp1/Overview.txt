@@ -1,0 +1,14 @@
+Underlying the structure of a database is the data model: a collection of conceptual
+tools for describing data, data relationships, data semantics, and consistency
+constraints. 
+
+• Relational Model.
+• Entity-Relationship Model.
+• Object-Based Data Model. 
+• Semistructured Data Model. 
+
+DML
+• Procedural DMLs require a user to specify what data are needed and how to
+get those data.
+• Declarative DMLs (also referred to as nonprocedural DMLs) require a user to
+specify what data are needed without specifying how to get those data.
