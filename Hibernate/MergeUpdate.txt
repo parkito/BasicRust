@@ -1,0 +1,11 @@
+When Hibernate flushes the persistence context for the next time, its dirty checking mechanism checks all managed entities. If it detects that the merge operation changed any entity attribute value, it triggers the required SQL UPDATE statement.
+
+There is one important detail you need to know when you use JPA’s merge method. Hibernate copies the attribute values of the detached entity to the managed entity. This overwrites any changes that you performed on this entity within the current Session.
+
+Hibernate’s update method doesn’t trigger an SQL SELECT statement. It just attaches the entity to the current persistence context. In contrast to JPA’s merge method, you can’t lose any changes by calling the update method. If the persistence context already contains a managed instance of the entity you want to update, it throws an exception.
+
+When Hibernate performs the next flush, it doesn’t perform any dirty checks. That’s not possible because Hibernate didn’t read the latest version of the entity from the database. It just executes an SQL UPDATE statement for the reattached entity.
+
+Which one to choose?
+
+There is no general answer to this questions. As you have seen, both methods have their advantages and disadvantages. You have to decide for your specific use case if Hibernate needs to select the entity before it triggers the SQL UPDATE statement. And if that’s the case, you also need to consider the depth of your entity graph and the performance implications of the provided fetching behavior.
