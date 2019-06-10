@@ -1,0 +1,20 @@
+1) Intrinsic locks are reentrant, if a thread tries to acquire a lock that it already holds, the request succeeds.
+
+2) HotSpot uses DAC Dynamic Adaptive Compilator. More powerfull than JIT
+
+3) To publish an object safely, both the reference to the object and the ob- ject’s state must be made visible to other threads at the same time. A properly constructed object can be safely published by:
+• Initializing an object reference from a static initializer;
+• Storing a reference to it into a volatile field or AtomicReference;
+• Storing a reference to it into a final field of a properly constructed
+object; or
+• Storing a reference to it into a field that is properly guarded by a
+lock
+
+4) The iterators returned by ConcurrentHashMap are weakly consistent instead of fail-fast.      A weakly consistent iterator can tolerate con- current modification, traverses elements as they existed when the iterator was constructed, and may (but is not guaranteed to) reflect modifications to the collection after the construction of the iterator.
+
+5)A producer-consumer design has one shared work queue for all consumers; in a work stealing design, every consumer has its own deque. If a consumer exhausts the work in its own deque, it can steal work from the tail of someone else’s deque
+
+Synchronizers
+6)A latch acts as a gate: until the latch reaches the terminal state the gate is closed and no thread can pass, and in the terminal state the gate opens, allowing all threads to pass. Once the latch reaches the terminal state, it cannot change state again, so it remains open forever. Latches can be used to ensure that certain activities do not proceed until other one-time activities complete
+
+7)Counting semaphores are used to control the number of activities that can access a certain resource or perform a given action at the same time
