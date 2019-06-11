@@ -18,3 +18,15 @@ Synchronizers
 6)A latch acts as a gate: until the latch reaches the terminal state the gate is closed and no thread can pass, and in the terminal state the gate opens, allowing all threads to pass. Once the latch reaches the terminal state, it cannot change state again, so it remains open forever. Latches can be used to ensure that certain activities do not proceed until other one-time activities complete
 
 7)Counting semaphores are used to control the number of activities that can access a certain resource or perform a given action at the same time
+
+8)CyclicBarrier allows a fixed number of parties to rendezvous repeatedly at a barrier point and is useful in parallel iterative algorithms that break down a problem into a fixed number of independent subproblems. The key difference is that with a barrier, all the threads must come together at a barrier point at the same time in order to proceed. Latches are for waiting for events; barriers are for waiting for other threads
+
+Semaphore объект синхронизации, ограничивающий количество потоков, которые могут «войти» в заданный участок кода;
+
+CountDownLatch 	объект синхронизации, разрешающий вход в заданный участок кода при выполнении определенных условий;
+
+CyclicBarrier 	объект синхронизации типа «барьер», блокирующий выполнение определенного кода для заданного количества потоков;
+
+Exchanger объект синхронизации, позволяющий провести обмен данными между двумя потоками;
+
+Phaser 	объект синхронизации типа «барьер», но в отличие от CyclicBarrier, предоставляет больше гибкости.
