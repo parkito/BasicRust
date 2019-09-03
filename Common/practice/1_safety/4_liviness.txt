@@ -1,0 +1,7 @@
+There is frequently a tension between simplicity and performance. 
+When implementing a synchronization policy,
+resist the temptation to prematurely sacrifice simplicity 
+(potentially compromising safety) for the sake of performance.
+
+Avoid holding locks during lengthy computations or operations
+at risk of not completing quickly such as network or console I/O.

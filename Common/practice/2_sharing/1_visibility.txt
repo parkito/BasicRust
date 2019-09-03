@@ -1,0 +1,25 @@
+In the absence of synchronization, the compiler, processor,
+and runtime can do some downright weird things to the order in which operations appear to execute. 
+Attempts to reason about the order in which memory actions “must”
+happen in insufficiently synchronized multithreaded programs will almost certainly be incorrect.
+
+Pojos
+Among other hazards, it is susceptible to stale values:
+if one thread calls set, other threads calling get may or may not see that update
+
+Locking is not just about mutual exclusion; it is also about memory visi- bility.
+To ensure that all threads see the most up-to-date values of shared mutable variables,
+the reading and writing threads must synchronize on a common lock.
+
+volatile, the compiler and runtime are put on notice that this variable
+is shared and that operations on it should not be reordered with other memory operations.
+Volatile variables are not cached in registers or in caches where
+they are hidden from other processors, so a read of a volatile
+variable always returns the most recent write by any thread.
+
+Use volatile variables only when they simplify implementing
+and verifying your synchronization policy; 
+avoid using volatile variables when veryfing correctness
+would require subtle reasoning about visibility.
+Good uses of volatile variables include ensuring the visibility of their own state,
+that of the object they refer to, or indicating that an important lifecycle event (such as initialization or shutdown) has occurred.
