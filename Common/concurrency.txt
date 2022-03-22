@@ -2,7 +2,7 @@
 
 2) HotSpot uses DAC Dynamic Adaptive Compilator. More powerfull than JIT
 
-3) To publish an object safely, both the reference to the object and the ob- ject’s state must be made visible to other threads at the same time. A properly constructed object can be safely published by:
+3) To publish an object safely, both the reference to the object and the object’s state must be made visible to other threads at the same time. A properly constructed object can be safely published by:
 • Initializing an object reference from a static initializer;
 • Storing a reference to it into a volatile field or AtomicReference;
 • Storing a reference to it into a final field of a properly constructed

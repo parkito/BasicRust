@@ -23,3 +23,15 @@ avoid using volatile variables when veryfing correctness
 would require subtle reasoning about visibility.
 Good uses of volatile variables include ensuring the visibility of their own state,
 that of the object they refer to, or indicating that an important lifecycle event (such as initialization or shutdown) has occurred.
+
+Locking can guarantee both visibility and atomicity;
+volatile variables can only guarantee visibility.
+
+You can use volatile variables only when all the following criteria are met:
+
+• Writes to the variable do not depend on its current value,
+ or you can ensure that only a single thread ever updates the value
+
+• The variable does not participate in invariants with other state variables;
+
+• Locking is not required for any other reason while the variable is being accessed.
