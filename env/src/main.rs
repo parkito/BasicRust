@@ -2,7 +2,7 @@ use std::env;
 use std::str::FromStr;
 
 fn main() {
-    read_parameters_from_env();
+    read_parameters_from_env()
 }
 
 fn read_parameters_from_env() {
