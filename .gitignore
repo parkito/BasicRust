@@ -1,0 +1,23 @@
+syntax: glob
+*.idea
+*.lock
+target
+*.iml
+\.orig\..*$
+\.orig$
+\.chg\..*$
+\.rej$
+\.conflict\~$
+/cmake-build-debug/
+*.class
+**/cmake-build-debug/
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+hs_err_pid*

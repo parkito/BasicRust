@@ -1,3 +1,0 @@
-1) @Primary - if interface has 2 implementation this annotation helps resolve conflicts
-by injecting only primary implementation
-2) @Profile - use bean only in mentioned profile
