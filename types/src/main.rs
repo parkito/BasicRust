@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
 
+use std::fmt::format;
 use std::ops::Add;
 
 fn main() {
@@ -50,7 +51,79 @@ fn main() {
     //characters
     assert_eq!('*'.is_alphabetic(), false);
     assert_eq!('1'.is_digit(2), true);
-    assert_eq!(std::char::from_digit(2,10), Some(2));
+    assert_eq!(std::char::from_digit(2, 10), Some('2'));
+
+    //unit type
+    let uni: () = {};
+
+    //references
+    let i: i32 = 5;
+    let pi1: &i32 = &i;
+    // let mut pi2: &i32 = &i;
+
+    //boxes
+    let t1 = (12, "eggs");
+    let t1b: Box<(i32, &str)> = Box::new(t1); //goes to heap
+
+    //arrays
+    let arr1: [i32; 5] = [1, 2, 3, 4, 5];
+    let arr2 = [1, 2, 3, 4];
+    println!("{}", arr2.len());
+
+    let mut arr3 = [0; 10]; // arrays of size 10 with only zeros
+    arr3[1] = 1;
+
+    let vec1: Vec<i32> = Vec::new();
+    let vec2: Vec<i32> = vec![1, 23];
+    let vec3: Vec<i32> = vec![1; 5]; //vector of size 5 filled with 1
+    let vec4: Vec<i32> = (0..10).collect(); //vector from iterator
+    let mut vec5: Vec<i32> = Vec::with_capacity(10); //capacity 10, len 2
+    // println!("{}", vec5[0]); //panic
+    vec5.push(1);
+    println!("{}", vec5[0]);
+
+    //slices
+    let vec6: Vec<i32> = vec![1, 2, 3, 4];
+    let arr3: [i32; 4] = [1, 2, 3, 4];
+    let sv1: &[i32] = &vec6; //slice of array
+    let sv2: &[i32] = &arr3; //slice of vector
+    println!("{}", sv1.len());
+
+    print_slice(sv1);
+    print_slice(sv2);
+    print_slice(&sv1[0..2]); //part of the slice
+
+    //strings
+    let literal = "string";
+    let raw1 = r"C:\program Files\ ";
+    let raw2 = r###"
+    This
+    is string with stuff like " or '
+    "###;
+
+    let byte_str = b"String";
+    let row_byte_str = br"\\//String";
+    //&str is a fat pinter to u8 vector
+
+    assert_eq!("©©".len(), 4);//in bytes
+    assert_eq!("©©".chars().count(), 2);//number of symbols
+
+    let str1: String = "string".to_string();
+    let str2: String = format!("THis is {}", 2).to_string();
+    let vec7 = vec!["on1", "two"];
+    let concated = vec7.concat();
+    let joined = vec7.join(",");
+
+    //Aliases
+    type NewType = Vec<Vec<i32>>;
+    let tp: NewType = vec![vec![1, 2, 3]];
+}
+
+fn print_slice(slice: &[i32]) {
+    for sl in slice {
+        print!("{} ", sl)
+    };
+    println!()
 }
 
 fn overflow() {
