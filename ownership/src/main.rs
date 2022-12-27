@@ -59,6 +59,11 @@ fn main() {
     let rc1: Rc<String> = Rc::new("hello".to_string());
     let rc2 = rc1.clone(); //no copy, just internal counter increment
     // rc1.push("f".to_string()) Rc is immutable
+
+    let mut p0 = create_person();
+    p0.name = "soe".to_string();
+
+    let p2 = create_person_ref(&mut p0);
 }
 
 fn print_person(person: Person) {
@@ -69,4 +74,14 @@ fn print_copyable_person(person: CopyablePerson) {
     println!("{}", person.name)
 }
 
+fn create_person() -> Person {
+    return Person {
+        name: "one".to_string(),
+        second_name: None,
+    };
+}
 
+fn create_person_ref(person: &mut Person) -> &Person {
+    person.name = "".to_string();
+    return person;
+}
