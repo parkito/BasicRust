@@ -15,6 +15,9 @@ struct CopyablePerson {
 }
 
 fn main() {
+    let vec1 = &vec![1, 2, 3, 4];
+    show_nth_element(vec1, 10);
+
     let mut vec: Vec<i32> = Vec::new();
     for i in 0..10 {
         vec.push(i);
@@ -84,4 +87,15 @@ fn create_person() -> Person {
 fn create_person_ref(person: &mut Person) -> &Person {
     person.name = "".to_string();
     return person;
+}
+
+fn show_nth_element(vec: &Vec<i32>, n: usize) {
+    let mut v1 = Vec::new();
+    for i in 0..10 {
+        v1.push(i.to_string());
+    }
+    // let th = v1[2]; //String is not Copy type. So, this is prohibited
+    let nth = vec[n]; //copying is happening here
+    println!("{}", nth);
+
 }

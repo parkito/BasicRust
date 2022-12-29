@@ -113,6 +113,10 @@ impl Logger for StdLogger {
     }
 }
 
+struct FileLogger{
+
+}
+
 #[test]
 fn levels_have_correct_names() {
     for level in Level::VALUES {
