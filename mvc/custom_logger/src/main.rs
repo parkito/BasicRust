@@ -5,6 +5,7 @@ extern crate core;
 
 use std::fmt;
 use std::fmt::{Formatter};
+use std::sync::Mutex;
 use crate::Level::{DEBUG, FATAL, INFO, NONE, TRACE, WARN};
 use crate::LogType::STD;
 
@@ -54,17 +55,15 @@ struct LogSetting {
 
 struct LogFactory {}
 
+static LOG_SETTING: Mutex<Option<LogSetting>> = Mutex::new(None);
+
 impl LogFactory {
-    fn log_setting() -> &'static Option<LogSetting> {
-        static LOG_SETTING: &Option<LogSetting> = &None;
-        return LOG_SETTING;
+    fn log_setting() -> Option<LogSetting> {
+        return LOG_SETTING.lock().unwrap().take();
     }
 
     fn set_log_setting(setting: LogSetting) {
-        match LogFactory::log_setting() {
-            None => LogFactory::set_log_setting(setting),
-            Some(se) => panic!("Logger setting is already defined")
-        }
+        LOG_SETTING.lock().unwrap().replace(setting);
     }
 
     fn init() {
@@ -109,8 +108,8 @@ impl Logger for StdLogger {
     }
 
     fn log(&self, level: Level, msg: &str) {
-        // self.format(level)
-        println!("hello")
+        let line = self.format(level, &*self.name, msg);
+        println!("{}", line)
     }
 }
 
