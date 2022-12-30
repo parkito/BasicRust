@@ -1,73 +1,80 @@
-use std::{fs, io};
+use std::{fmt, fs, io};
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path};
 
-fn main() {
-    println!("Hello, world!");
+struct FileAppender {
+    writter: BufWriter<File>,
 }
 
-struct FileWrapper {
-    path: Box<Path>,
+impl FileAppender {
+    fn append(&mut self, line: &str) {
+        self.writter.write_all(line.as_bytes()).expect("Cannot write to log file");
+        self.writter.flush().expect("Cannot flush file");
+    }
 }
 
-impl FileWrapper {
-    fn read_file(&self) -> Vec<String> {
-        let file = match File::open(self.path.as_ref()) {
-            Ok(f) => f,
-            Err(err) =>
-                {
-                    let file_name = self.path.file_name()
-                        .expect("Cannot get filename")
-                        .to_str()
-                        .expect("Os string conversion failed");
-                    panic!("Cannot open the file {} because of {}", file_name, err.to_string())
-                }
-        };
-        let b_reader = BufReader::new(file);
-        return match b_reader.lines().collect::<io::Result<Vec<String>>>() {
+struct FileManager;
+
+impl FileManager {
+    fn read_file(file_uri: &str) -> Vec<String> {
+        let reader = FileIoFactory::create_buf_reader(file_uri);
+        let v = match reader.lines().collect::<io::Result<Vec<String>>>() {
             Ok(l) => l,
             Err(err) => panic!("Cannot read file due to {}", err.to_string()),
         };
+        return v;
     }
 
-    fn append(&self, line: &str) {
+    fn remove(file_uri: &str) {
+        fs::remove_file(Path::new(file_uri)).expect("File cannot be removed");
+    }
+}
+
+struct FileIoFactory;
+
+impl FileIoFactory {
+    fn create_buf_writer(file_uri: &str) -> BufWriter<File> {
+        let path = Path::new(file_uri);
         let file = match OpenOptions::new()
             .create(true)
             .append(true)
             .write(true)
-            .open(self.path.as_ref()) {
+            .open(path) {
             Ok(f) => f,
-            Err(err) => panic!("Cannot write to {} due to {}", self.file_name(), err.to_string())
+            Err(err) => panic!("Cannot write to {} due to {}", file_uri, err.to_string())
         };
-        let mut b_writer = BufWriter::new(file);
-        b_writer.write_all(line.as_bytes()).expect("Cannot write to file")
+        return BufWriter::new(file);
     }
 
-    fn file_name(&self) -> &str {
-        return self.path.file_name()
-            .expect("Cannot get filename")
-            .to_str()
-            .expect("Os string conversion failed");
-    }
-
-    fn remove(&self) {
-        fs::remove_file(self.path.as_ref()).expect("File cannot be removed");
+    fn create_buf_reader(file_uri: &str) -> BufReader<File> {
+        let path = Path::new(file_uri);
+        let file = match File::open(path) {
+            Ok(f) => f,
+            Err(err) =>
+                {
+                    panic!("Cannot open the file {} because of {}", file_uri, err.to_string())
+                }
+        };
+        return BufReader::new(file);
     }
 }
 
+
 #[test]
 fn write_and_read_file() {
-    let content = "something";
-    let wrapper = FileWrapper { path: Box::from(Path::new("/tmp/1.txt")) };
+    let expected_content = "something";
+    let file = "/tmp/1.txt";
 
-    wrapper.append(content);
+    let mut appender = FileAppender { writter: FileIoFactory::create_buf_writer(file) };
 
-    let res = wrapper.read_file();
-    assert_eq!(res.len(), 1);
-    assert_eq!(res[0], content);
+    appender.append(expected_content);
 
-    wrapper.remove()
+    let found_content = FileManager::read_file(file);
+    assert_eq!(found_content.len(), 1);
+    assert_eq!(found_content[0], expected_content);
+
+    FileManager::remove(file)
 }
 
 
