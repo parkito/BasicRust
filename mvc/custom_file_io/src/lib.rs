@@ -1,4 +1,5 @@
 use std::{fs, io};
+use std::fmt::format;
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path};
@@ -10,7 +11,8 @@ pub struct FileAppender {
 
 impl FileAppender {
     pub fn append(&mut self, line: &str) {
-        self.writer.write_all(line.as_bytes()).expect("Cannot write to log file");
+        let ln = format!("{}\n", line);
+        self.writer.write_all(ln.as_bytes()).expect("Cannot write to log file");
         self.writer.flush().expect("Cannot flush file");
     }
 }

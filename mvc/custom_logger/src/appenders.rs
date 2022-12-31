@@ -3,6 +3,7 @@
 
 extern crate core;
 
+use custom_file_io::FileAppender;
 use crate::{Level, Logger};
 
 pub struct StdLogger {
@@ -14,10 +15,25 @@ impl Logger for StdLogger {
         return self.name.to_string();
     }
 
-    fn log(&self, level: Level, msg: &str) {
+    fn log(&mut self, level: Level, msg: &str) {
         let line = self.format(level, &*self.name, msg);
         println!("{}", line)
     }
 }
 
-struct FileLogger {}
+pub struct FileLogger {
+    pub name: String,
+    pub appender: FileAppender,
+}
+
+impl Logger for FileLogger {
+    fn log(&mut self, level: Level, msg: &str) {
+        let line = self.format(level, &*self.name, msg);
+        self.appender.append(line.as_str());
+    }
+
+    fn name(&self) -> String {
+        return self.name.to_string();
+    }
+}
+

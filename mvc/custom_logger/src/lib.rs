@@ -1,9 +1,13 @@
 mod appenders;
 
 use std::fmt;
+use std::mem;
 use std::fmt::{Formatter};
 use std::sync::Mutex;
+use custom_file_io::{FileAppender, FileIoFactory};
+use LogType::FILE;
 use crate::appenders::StdLogger;
+use crate::appenders::FileLogger;
 use crate::Level::{DEBUG, FATAL, INFO, NONE, TRACE, WARN};
 use crate::LogType::STD;
 
@@ -38,29 +42,39 @@ impl fmt::Display for Level {
     }
 }
 
-enum LogType {
+#[derive(Debug, Clone)]
+pub enum LogType {
     FILE,
     #[allow(non_camel_case_types)]
     ENV_STREAMS,
     STD,
 }
 
-struct LogSetting {
-    log_type: LogType,
-    file_path: Option<String>,
-    root_level: Option<Level>,
+#[derive(Debug, Clone)]
+pub struct LogSetting {
+    pub log_type: LogType,
+    pub file_path: Option<String>,
+    pub root_level: Option<Level>,
 }
+
+struct LogContext {
+    appender: FileAppender,
+}
+
+static LOG_SETTING: Mutex<Option<LogSetting>> = Mutex::new(None);
+// static LOG_CONTEXT: Mutex<Option<LogContext>> = Mutex::new(None);
 
 pub struct LogFactory {}
 
-static LOG_SETTING: Mutex<Option<LogSetting>> = Mutex::new(None);
-
 impl LogFactory {
-    fn log_setting() -> Option<LogSetting> {
-        return LOG_SETTING.lock().unwrap().take();
+    pub fn log_setting() -> Option<LogSetting> {
+        return match LOG_SETTING.lock().unwrap().as_ref() {
+            None => None,
+            Some(s) => Some(s.clone())
+        };
     }
 
-    fn set_log_setting(setting: LogSetting) {
+    pub fn set_log_setting(setting: LogSetting) {
         LOG_SETTING.lock().unwrap().replace(setting);
     }
 
@@ -80,7 +94,21 @@ impl LogFactory {
         let settings = LogFactory::log_setting();
         return match settings {
             None => panic!("Settings at this stage must exist"),
-            Some(_setting) => Box::new(StdLogger { name: logger.to_string() })
+            Some(_setting) => {
+                match _setting.log_type {
+                    FILE => {
+                        Box::new(
+                            FileLogger {
+                                name: logger.to_string(),
+                                appender: FileAppender {
+                                    writer: FileIoFactory::create_buf_writer(&_setting.file_path.expect(""))
+                                },
+                            }
+                        )
+                    }
+                    _ => Box::new(StdLogger { name: logger.to_string() })
+                }
+            }
         };
     }
 }
@@ -88,10 +116,10 @@ impl LogFactory {
 pub trait Logger {
     fn name(&self) -> String;
 
-    fn log(&self, level: Level, msg: &str);
+    fn log(&mut self, level: Level, msg: &str);
 
     fn format(&self, level: Level, logger_name: &str, msg: &str) -> String {
         let now = chrono::offset::Local::now().to_string();
-        return format!("{} [{}]: {}", now, logger_name, msg);
+        return format!("{} {} [{}]: {}", now, level.to_str(), logger_name, msg);
     }
 }
