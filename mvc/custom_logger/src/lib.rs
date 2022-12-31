@@ -1,11 +1,9 @@
-#![allow(dead_code)]
-#![allow(unused_variables)]
-
-extern crate core;
+mod appenders;
 
 use std::fmt;
 use std::fmt::{Formatter};
 use std::sync::Mutex;
+use crate::appenders::StdLogger;
 use crate::Level::{DEBUG, FATAL, INFO, NONE, TRACE, WARN};
 use crate::LogType::STD;
 
@@ -20,7 +18,7 @@ pub enum Level {
 }
 
 impl Level {
-    const VALUES: [(Self, &'static str); 6] = [
+    pub const VALUES: [(Self, &'static str); 6] = [
         (NONE, "NONE"),
         (FATAL, "FATAL"),
         (WARN, "WARN"),
@@ -53,7 +51,7 @@ struct LogSetting {
     root_level: Option<Level>,
 }
 
-struct LogFactory {}
+pub struct LogFactory {}
 
 static LOG_SETTING: Mutex<Option<LogSetting>> = Mutex::new(None);
 
@@ -73,7 +71,7 @@ impl LogFactory {
         }
     }
 
-    fn build(logger: &str) -> Box<dyn Logger> {
+    pub fn build(logger: &str) -> Box<dyn Logger> {
         match LogFactory::log_setting() {
             None => LogFactory::init(),
             Some(_) => {}
@@ -82,12 +80,12 @@ impl LogFactory {
         let settings = LogFactory::log_setting();
         return match settings {
             None => panic!("Settings at this stage must exist"),
-            Some(setting) => Box::new(StdLogger { name: logger.to_string() })
+            Some(_setting) => Box::new(StdLogger { name: logger.to_string() })
         };
     }
 }
 
-trait Logger {
+pub trait Logger {
     fn name(&self) -> String;
 
     fn log(&self, level: Level, msg: &str);
@@ -96,36 +94,4 @@ trait Logger {
         let now = chrono::offset::Local::now().to_string();
         return format!("{} [{}]: {}", now, logger_name, msg);
     }
-}
-
-struct StdLogger {
-    name: String,
-}
-
-impl Logger for StdLogger {
-    fn name(&self) -> String {
-        return self.name.to_string();
-    }
-
-    fn log(&self, level: Level, msg: &str) {
-        let line = self.format(level, &*self.name, msg);
-        println!("{}", line)
-    }
-}
-
-struct FileLogger{
-
-}
-
-#[test]
-fn levels_have_correct_names() {
-    for level in Level::VALUES {
-        assert_eq!(level.0.to_str(), level.1);
-    };
-}
-
-#[test]
-fn print_logs_in_std() {
-    let logger = LogFactory::build("first_logger");
-    logger.log(Level::INFO, "first message");
 }

@@ -3,5 +3,10 @@ name = "custom_logger"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+name = "logging"
+path = "src/lib.rs"
+
 [dependencies]
 chrono = "0.4.23"
+custom_file_io = { path = "../custom_file_io" }

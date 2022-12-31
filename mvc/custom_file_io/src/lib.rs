@@ -1,23 +1,24 @@
-use std::{fmt, fs, io};
+use std::{fs, io};
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path};
 
-struct FileAppender {
-    writter: BufWriter<File>,
+//todo use internal state for mantaining buffer
+pub struct FileAppender {
+    pub writer: BufWriter<File>,
 }
 
 impl FileAppender {
-    fn append(&mut self, line: &str) {
-        self.writter.write_all(line.as_bytes()).expect("Cannot write to log file");
-        self.writter.flush().expect("Cannot flush file");
+    pub fn append(&mut self, line: &str) {
+        self.writer.write_all(line.as_bytes()).expect("Cannot write to log file");
+        self.writer.flush().expect("Cannot flush file");
     }
 }
 
-struct FileManager;
+pub struct FileManager;
 
 impl FileManager {
-    fn read_file(file_uri: &str) -> Vec<String> {
+    pub fn read_file(file_uri: &str) -> Vec<String> {
         let reader = FileIoFactory::create_buf_reader(file_uri);
         let v = match reader.lines().collect::<io::Result<Vec<String>>>() {
             Ok(l) => l,
@@ -26,15 +27,15 @@ impl FileManager {
         return v;
     }
 
-    fn remove(file_uri: &str) {
+    pub fn remove(file_uri: &str) {
         fs::remove_file(Path::new(file_uri)).expect("File cannot be removed");
     }
 }
 
-struct FileIoFactory;
+pub struct FileIoFactory;
 
 impl FileIoFactory {
-    fn create_buf_writer(file_uri: &str) -> BufWriter<File> {
+    pub fn create_buf_writer(file_uri: &str) -> BufWriter<File> {
         let path = Path::new(file_uri);
         let file = match OpenOptions::new()
             .create(true)
@@ -59,23 +60,3 @@ impl FileIoFactory {
         return BufReader::new(file);
     }
 }
-
-
-#[test]
-fn write_and_read_file() {
-    let expected_content = "something";
-    let file = "/tmp/1.txt";
-
-    let mut appender = FileAppender { writter: FileIoFactory::create_buf_writer(file) };
-
-    appender.append(expected_content);
-
-    let found_content = FileManager::read_file(file);
-    assert_eq!(found_content.len(), 1);
-    assert_eq!(found_content[0], expected_content);
-
-    FileManager::remove(file)
-}
-
-
-
