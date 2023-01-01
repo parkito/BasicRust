@@ -1,7 +1,6 @@
 mod appenders;
 
 use std::fmt;
-use std::mem;
 use std::fmt::{Formatter};
 use std::sync::Mutex;
 use custom_file_io::{FileAppender, FileIoFactory};
@@ -62,7 +61,7 @@ struct LogContext {
 }
 
 static LOG_SETTING: Mutex<Option<LogSetting>> = Mutex::new(None);
-// static LOG_CONTEXT: Mutex<Option<LogContext>> = Mutex::new(None);
+// static LOG_CONTEXT: Mutex<Option<HashMap<String, LogContext>>> = Mutex::new(None);
 
 pub struct LogFactory {}
 
@@ -101,7 +100,7 @@ impl LogFactory {
                             FileLogger {
                                 name: logger.to_string(),
                                 appender: FileAppender {
-                                    writer: FileIoFactory::create_buf_writer(&_setting.file_path.expect(""))
+                                    writer: Mutex::new(FileIoFactory::create_buf_writer(&_setting.file_path.expect("")))
                                 },
                             }
                         )
@@ -116,7 +115,7 @@ impl LogFactory {
 pub trait Logger {
     fn name(&self) -> String;
 
-    fn log(&mut self, level: Level, msg: &str);
+    fn log(&self, level: Level, msg: &str);
 
     fn format(&self, level: Level, logger_name: &str, msg: &str) -> String {
         let now = chrono::offset::Local::now().to_string();

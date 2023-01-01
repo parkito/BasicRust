@@ -1,19 +1,20 @@
 use std::{fs, io};
-use std::fmt::format;
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::path::{Path};
+use std::sync::Mutex;
 
 //todo use internal state for mantaining buffer
 pub struct FileAppender {
-    pub writer: BufWriter<File>,
+    pub writer: Mutex<BufWriter<File>>,
 }
 
 impl FileAppender {
-    pub fn append(&mut self, line: &str) {
+    pub fn append(&self, line: &str) {
         let ln = format!("{}\n", line);
-        self.writer.write_all(ln.as_bytes()).expect("Cannot write to log file");
-        self.writer.flush().expect("Cannot flush file");
+        let mut wr = self.writer.lock().unwrap();
+        wr.write_all(ln.as_bytes()).expect("Cannot write to log file");
+        wr.flush().expect("Cannot flush file");
     }
 }
 

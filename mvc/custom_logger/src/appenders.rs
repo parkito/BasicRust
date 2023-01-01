@@ -15,7 +15,7 @@ impl Logger for StdLogger {
         return self.name.to_string();
     }
 
-    fn log(&mut self, level: Level, msg: &str) {
+    fn log(&self, level: Level, msg: &str) {
         let line = self.format(level, &*self.name, msg);
         println!("{}", line)
     }
@@ -27,7 +27,7 @@ pub struct FileLogger {
 }
 
 impl Logger for FileLogger {
-    fn log(&mut self, level: Level, msg: &str) {
+    fn log(&self, level: Level, msg: &str) {
         let line = self.format(level, &*self.name, msg);
         self.appender.append(line.as_str());
     }

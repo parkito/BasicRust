@@ -1,4 +1,5 @@
 mod custom_file_io_tests {
+    use std::sync::Mutex;
     use custom_file_io::{FileAppender, FileIoFactory, FileManager};
 
     #[test]
@@ -6,8 +7,7 @@ mod custom_file_io_tests {
         let expected_content = "something";
         let file = "/tmp/1.txt";
 
-
-        let mut appender = FileAppender { writer: FileIoFactory::create_buf_writer(file) };
+        let appender = FileAppender { writer: Mutex::new(FileIoFactory::create_buf_writer(file)) };
 
         appender.append(expected_content);
 

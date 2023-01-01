@@ -13,7 +13,7 @@ mod custom_logger_test {
 
     #[test]
     fn print_logs_in_std() {
-        let mut logger = LogFactory::build("first_logger");
+        let logger = LogFactory::build("first_logger");
         logger.log(Level::INFO, "first message");
     }
 
@@ -23,7 +23,7 @@ mod custom_logger_test {
         LogFactory::set_log_setting(
             LogSetting { log_type: FILE, file_path: Some(file.to_string()), root_level: Some(TRACE) }
         );
-        let mut logger = LogFactory::build("first_logger");
+        let logger = LogFactory::build("first_logger");
 
         logger.log(Level::INFO, "first message");
         logger.log(Level::INFO, "second message");
