@@ -1,5 +1,5 @@
 [package]
-name = "custom_rest_endpoints"
+name = "custom_rest_endpoint"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 custom_logger = { path = "../custom_logger" }
+log = "0.4.0"
 actix-rt = "2.7.0"
 actix-web = "4.2.1"
 serde = "1.0.106"

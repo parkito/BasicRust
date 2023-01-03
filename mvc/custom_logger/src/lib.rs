@@ -2,7 +2,8 @@ mod appenders;
 
 use std::fmt;
 use std::fmt::{Formatter};
-use std::sync::Mutex;
+use std::rc::Rc;
+use std::sync::{Arc, Mutex};
 use custom_file_io::{FileAppender, FileIoFactory};
 use LogType::FILE;
 use crate::appenders::StdLogger;
@@ -84,7 +85,7 @@ impl LogFactory {
         }
     }
 
-    pub fn build(logger: &str) -> Box<dyn Logger> {
+    pub fn build(logger: &str) -> Arc<dyn Logger> {
         match LogFactory::log_setting() {
             None => LogFactory::init(),
             Some(_) => {}
@@ -96,7 +97,7 @@ impl LogFactory {
             Some(_setting) => {
                 match _setting.log_type {
                     FILE => {
-                        Box::new(
+                        Arc::new(
                             FileLogger {
                                 name: logger.to_string(),
                                 appender: FileAppender {
@@ -105,7 +106,7 @@ impl LogFactory {
                             }
                         )
                     }
-                    _ => Box::new(StdLogger { name: logger.to_string() })
+                    _ => Arc::new(StdLogger { name: logger.to_string() })
                 }
             }
         };
@@ -116,6 +117,18 @@ pub trait Logger {
     fn name(&self) -> String;
 
     fn log(&self, level: Level, msg: &str);
+
+    fn debug(&self, msg: &str) {
+        self.log(DEBUG, msg);
+    }
+
+    fn info(&self, msg: &str) {
+        self.log(INFO, msg);
+    }
+
+    fn warn(&self, msg: &str) {
+        self.log(WARN, msg);
+    }
 
     fn format(&self, level: Level, logger_name: &str, msg: &str) -> String {
         let now = chrono::offset::Local::now().to_string();
