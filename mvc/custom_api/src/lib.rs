@@ -1,0 +1,25 @@
+use chrono::{Date, DateTime, NaiveDate, TimeZone, Utc};
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Deserialize, Serialize)]
+pub enum UserLevel {
+    CLIENT,
+    ADMIN,
+    MODER,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct UserPersonalDataDto {
+    pub id: String,
+    pub username: String,
+    pub password: String,
+    pub birth_date: NaiveDate,
+    pub level: UserLevel,
+}
+
+#[derive(Debug, Ord, PartialOrd, Eq, PartialEq)]
+pub struct Message {
+    pub from: String,
+    pub to: String,
+    pub content: String,
+}
