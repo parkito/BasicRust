@@ -1,0 +1,13 @@
+[package]
+name = "custom_service"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+custom_db = { path = "../custom_db" }
+custom_api = { path = "../custom_api" }
+
+uuid = { version = "1.2.2", features = ["serde", "v8"] }
+

@@ -12,6 +12,14 @@ pub enum UserLevel {
 pub struct UserPersonalDataDto {
     pub id: String,
     pub username: String,
+    pub birth_date: NaiveDate,
+    pub level: UserLevel,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct UserRegistrationDto {
+    pub id: String,
+    pub username: String,
     pub password: String,
     pub birth_date: NaiveDate,
     pub level: UserLevel,

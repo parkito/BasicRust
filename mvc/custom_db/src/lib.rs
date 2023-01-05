@@ -2,25 +2,33 @@
 
 use std::collections::HashMap;
 use std::fmt;
-use std::fmt::{Display, Formatter};
+use std::fmt::{Display, Formatter, write};
 use std::error::Error;
 use chrono::NaiveDate;
-
+use crate::RepoErrorType::LOGIC;
 
 #[derive(Debug)]
-pub struct RepoError {
+pub struct CustomError {
     msg: String,
+    error_type: RepoErrorType,
 }
 
-impl Display for RepoError {
+#[derive(Debug)]
+pub enum RepoErrorType {
+    LOGIC,
+    DB,
+    UNKDNOWN,
+}
+
+impl Display for CustomError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        todo!()
+        write!(f, "{}", self.msg)
     }
 }
 
-impl Error for RepoError {}
+impl Error for CustomError {}
 
-pub type RepoResult<T> = Result<T, RepoError>;
+pub type CustomResult<T> = Result<T, CustomError>;
 
 #[derive(Debug)]
 pub enum UserLevel {
@@ -39,15 +47,15 @@ pub struct UserEntity {
 }
 
 pub trait EntityRepo<E, K> {
-    fn save(&mut self, entity: E) -> RepoResult<K>;
+    fn save(&mut self, entity: E) -> CustomResult<K>;
 
-    fn find(&self, key: K) -> RepoResult<Option<E>>;
+    fn find(&self, key: K) -> CustomResult<Option<&E>>;
 
-    fn update(&self, key: K, entity: E) -> RepoResult<E>;
+    fn update(&self, key: K, entity: E) -> CustomResult<E>;
 
-    fn remove(&self, key: K) -> RepoResult<K>;
+    fn remove(&self, key: K) -> CustomResult<K>;
 
-    fn find_all(&self) -> RepoResult<Vec<E>>;
+    fn find_all(&self) -> CustomResult<Vec<E>>;
 }
 
 pub struct UserCacheRepo {
@@ -55,26 +63,29 @@ pub struct UserCacheRepo {
 }
 
 impl EntityRepo<UserEntity, String> for UserCacheRepo {
-    fn save(&mut self, entity: UserEntity) -> RepoResult<String> {
+    fn save(&mut self, entity: UserEntity) -> CustomResult<String> {
         match self.map.try_insert(entity.id.to_string(), entity) {
-            Err(err) => Err(RepoError { msg: format!("User with id {} already exists", err.value.id) }),
+            Err(err) => Err(CustomError { msg: format!("User with id {} already exists", err.value.id), error_type: LOGIC }),
             Ok(some) => Ok(some.id.to_string())
         }
     }
 
-    fn find(&self, key: String) -> RepoResult<Option<UserEntity>> {
+    fn find(&self, key: String) -> CustomResult<Option<&UserEntity>> {
+        return match self.map.get(key.as_str()) {
+            None => Ok(None),
+            Some(some) => Ok(Option::Some(some))
+        };
+    }
+
+    fn update(&self, key: String, entity: UserEntity) -> CustomResult<UserEntity> {
         todo!()
     }
 
-    fn update(&self, key: String, entity: UserEntity) -> RepoResult<UserEntity> {
+    fn remove(&self, key: String) -> CustomResult<String> {
         todo!()
     }
 
-    fn remove(&self, key: String) -> RepoResult<String> {
-        todo!()
-    }
-
-    fn find_all(&self) -> RepoResult<Vec<UserEntity>> {
+    fn find_all(&self) -> CustomResult<Vec<UserEntity>> {
         todo!()
     }
 }
