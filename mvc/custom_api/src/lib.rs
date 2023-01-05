@@ -1,11 +1,17 @@
 use chrono::{Date, DateTime, NaiveDate, TimeZone, Utc};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Copy, Clone, Deserialize, Serialize)]
 pub enum UserLevel {
     CLIENT,
     ADMIN,
     MODER,
+}
+
+impl UserLevel {
+    fn code(level: &UserLevel) -> u8 {
+        return *level as u8;
+    }
 }
 
 #[derive(Debug, Deserialize, Serialize)]

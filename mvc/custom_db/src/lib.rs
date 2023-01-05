@@ -31,10 +31,10 @@ impl Error for CustomError {}
 pub type CustomResult<T> = Result<T, CustomError>;
 
 #[derive(Debug)]
-pub enum UserLevel {
-    CLIENT,
-    ADMIN,
-    MODER,
+pub enum UserAccessLevel {
+    CanMessage,
+    CanCreateUsers,
+    CanAdminister,
 }
 
 #[derive(Debug)]
@@ -43,7 +43,7 @@ pub struct UserEntity {
     pub username: String,
     pub password: String,
     pub birth_date: NaiveDate,
-    pub level: UserLevel,
+    pub level: UserAccessLevel,
 }
 
 pub trait EntityRepo<E, K> {

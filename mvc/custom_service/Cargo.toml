@@ -9,5 +9,5 @@ edition = "2021"
 custom_db = { path = "../custom_db" }
 custom_api = { path = "../custom_api" }
 
-uuid = { version = "1.2.2", features = ["serde", "v8"] }
+uuid = { version = "1.2.2", features = ["serde", "v7"] }
 
