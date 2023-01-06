@@ -1,21 +1,25 @@
 [package]
-name = "custom_rest_endpoint"
+name = "custom_rest"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "custom_rest"
+path = "src/lib.rs"
 
 [dependencies]
 custom_logger = { path = "../custom_logger" }
 custom_api = { path = "../custom_api" }
+custom_common = { path = "../custom_common" }
+
 log = "0.4.0"
+env_logger = "0.10.0"
 actix-rt = "2.7.0"
 actix-web = "4.2.1"
 serde = "1.0.106"
 serde_json = "1.0.51"
 chrono = { version = "0.4", features = ["serde"] }
 uuid = { version = "1.2.2", features = ["serde", "v4"] }
-env_logger = "0.10.0"
 diesel = { version = "2.0.2", features = ["postgres", "r2d2", "chrono", "uuid"] }
 r2d2 = "0.8.8"
 r2d2-diesel = "1.0.0"

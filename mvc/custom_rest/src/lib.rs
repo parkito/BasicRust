@@ -3,14 +3,14 @@ mod constants;
 
 use std::{env, io};
 use actix_web::{App, HttpServer, middleware};
+use log::info;
+use custom_common::CustomAppContext;
 use custom_logger::Level::DEBUG;
 use custom_logger::LogFactory;
 
 #[actix_rt::main]
-async fn main() -> io::Result<()> {
-    env::set_var("RUST_LOG", "actix_web=debug,actix_server=info");
-    env_logger::init();
-
+pub async fn run_server(context: CustomAppContext) -> io::Result<()> {
+    info!("Running web server on {}",context.props.port);
     HttpServer::new(|| {
         App::new()
             // enable logger - always register actix-web Logger middleware last

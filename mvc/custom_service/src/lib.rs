@@ -6,9 +6,9 @@ use custom_db::UserAccessLevel::CanCreateUsers;
 use UserAccessLevel::{CanAdminister, CanMessage};
 
 pub trait Converter<E, D> {
-    fn to_entity(dto: D) -> E;
+    fn to_entity(dto: &D) -> E;
 
-    fn to_dto(entity: E) -> D;
+    fn to_dto(entity: &E) -> D;
 }
 
 struct UserPermissionConverter;
@@ -18,7 +18,7 @@ struct UserRegistrationDtoConverter;
 struct UserPersonalDataDtoConverter;
 
 impl Converter<UserAccessLevel, UserLevel> for UserPermissionConverter {
-    fn to_entity(dto: UserLevel) -> UserAccessLevel {
+    fn to_entity(dto: &UserLevel) -> UserAccessLevel {
         return match dto {
             CLIENT => CanMessage,
             ADMIN => CanAdminister,
@@ -26,7 +26,7 @@ impl Converter<UserAccessLevel, UserLevel> for UserPermissionConverter {
         };
     }
 
-    fn to_dto(entity: UserAccessLevel) -> UserLevel {
+    fn to_dto(entity: &UserAccessLevel) -> UserLevel {
         return match entity {
             CanMessage => CLIENT,
             CanAdminister => ADMIN,
@@ -36,39 +36,39 @@ impl Converter<UserAccessLevel, UserLevel> for UserPermissionConverter {
 }
 
 impl Converter<UserEntity, UserRegistrationDto> for UserRegistrationDtoConverter {
-    fn to_entity(dto: UserRegistrationDto) -> UserEntity {
+    fn to_entity(dto: &UserRegistrationDto) -> UserEntity {
         return UserEntity {
             id: Uuid::new_v7().to_string(),
-            username: dto.username,
-            password: dto.password,
+            username: dto.username.to_string(),
+            password: dto.password.to_string(),
             birth_date: dto.birth_date,
-            level: UserPermissionConverter::to_entity(dto.level),
+            level: UserPermissionConverter::to_entity(&dto.level),
         };
     }
 
-    fn to_dto(entity: UserEntity) -> UserRegistrationDto {
+    fn to_dto(entity: &UserEntity) -> UserRegistrationDto {
         //not implemented
         todo!()
     }
 }
 
 impl Converter<UserEntity, UserPersonalDataDto> for UserPersonalDataDtoConverter {
-    fn to_entity(dto: UserPersonalDataDto) -> UserEntity {
+    fn to_entity(dto: &UserPersonalDataDto) -> UserEntity {
         return UserEntity {
-            id: dto.id,
-            username: dto.username,
+            id: dto.id.to_string(),
+            username: dto.username.to_string(),
             password: "".to_string(),
             birth_date: dto.birth_date,
-            level: UserPermissionConverter::to_entity(dto.level),
+            level: UserPermissionConverter::to_entity(&dto.level),
         };
     }
 
-    fn to_dto(entity: UserEntity) -> UserPersonalDataDto {
+    fn to_dto(entity: &UserEntity) -> UserPersonalDataDto {
         return UserPersonalDataDto {
-            id: entity.id,
-            username: entity.username,
+            id: entity.id.to_string(),
+            username: entity.username.to_string(),
             birth_date: entity.birth_date,
-            level: UserPermissionConverter::to_dto(entity.level),
+            level: UserPermissionConverter::to_dto(&entity.level),
         };
     }
 }
@@ -76,21 +76,22 @@ impl Converter<UserEntity, UserPersonalDataDto> for UserPersonalDataDtoConverter
 pub trait UserService {
     fn save_user(&mut self, user: UserRegistrationDto) -> CustomResult<String>;
 
-    fn find_user(&self, id: String) -> CustomResult<Option<UserPersonalDataDto>>;
+    fn find_user(&mut self, id: String) -> CustomResult<Option<&UserPersonalDataDto>>;
 }
 
 pub struct UserServiceImp {
     repo: dyn EntityRepo<UserEntity, String>,
-    // converter: dyn Converter<UserEntity, UserPersonalDataDto>,
 }
 
 impl UserService for UserServiceImp {
     fn save_user(&mut self, user: UserRegistrationDto) -> CustomResult<String> {
-        self.repo.save(user);
-        todo!()
+        self.repo.save(UserRegistrationDtoConverter::to_entity(&user))
     }
 
-    fn find_user(&self, id: String) -> CustomResult<Option<UserPersonalDataDto>> {
-        todo!()
+    fn find_user(&mut self, id: String) -> CustomResult<Option<&UserPersonalDataDto>> {
+        return match self.repo.find(id)? {
+            None => Ok(None),
+            Some(entity) => Ok(Option::from(&UserPersonalDataDtoConverter::to_dto(entity))),
+        };
     }
 }
