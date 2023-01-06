@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 custom_rest = { path = "../custom_rest" }
 custom_common = { path = "../custom_common" }
+custom_db = { path = "../custom_db" }
 
 log = "0.4.0"
 env_logger = "0.10.0"

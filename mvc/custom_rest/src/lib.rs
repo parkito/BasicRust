@@ -10,6 +10,7 @@ use custom_logger::LogFactory;
 
 #[actix_rt::main]
 pub async fn run_server(context: CustomAppContext) -> io::Result<()> {
+    //todo use service instead of context
     info!("Running web server on {}",context.props.port);
     HttpServer::new(|| {
         App::new()

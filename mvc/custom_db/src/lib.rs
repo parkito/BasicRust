@@ -1,5 +1,7 @@
 #![feature(map_try_insert)]
 
+pub mod init;
+
 use std::collections::HashMap;
 use std::fmt;
 use std::fmt::{Display, Formatter, write};

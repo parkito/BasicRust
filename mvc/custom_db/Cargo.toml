@@ -11,3 +11,5 @@ path = "src/lib.rs"
 custom_common = { path = "../custom_common" }
 chrono = { version = "0.4.23", features = ["serde"] }
 diesel = { version = "2.0.2", features = ["postgres", "r2d2", "chrono", "uuid"] }
+r2d2 = "0.8.8"
+r2d2-diesel = "1.0.0"
