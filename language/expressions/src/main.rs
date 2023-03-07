@@ -57,11 +57,10 @@ fn contains_a(str: &String) -> bool {
             println!("{}", position);
             true
         }
-        _none =>
-            {
-                println!("Not found");
-                false
-            }
+        _none => {
+            println!("Not found");
+            false
+        }
     };
 }
 

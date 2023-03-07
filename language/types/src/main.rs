@@ -85,13 +85,13 @@ fn main() {
     //slices
     let vec6: Vec<i32> = vec![1, 2, 3, 4];
     let arr3: [i32; 4] = [1, 2, 3, 4];
-    let sv1: &[i32] = &vec6; //slice of array
-    let sv2: &[i32] = &arr3; //slice of vector
+    let sv1: &[i32] = &vec6; //expressions of array
+    let sv2: &[i32] = &arr3; //expressions of vector
     println!("{}", sv1.len());
 
     print_slice(sv1);
     print_slice(sv2);
-    print_slice(&sv1[0..2]); //part of the slice
+    print_slice(&sv1[0..2]); //part of the expressions
 
     //strings
     let literal = "string";
